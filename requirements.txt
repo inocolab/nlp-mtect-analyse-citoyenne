@@ -1,0 +1,16 @@
+langchain
+langchain-mistralai
+langchain-community
+langchain-core
+tiktoken
+transformers
+detoxify
+pydantic
+tokenizers==0.19.1
+pandas
+mistralai
+tenacity
+langchain-aws
+sagemaker
+boto3
+scikit-learn

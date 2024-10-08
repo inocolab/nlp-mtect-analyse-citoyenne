@@ -1,0 +1,22 @@
+[tool.poetry]
+name = "ia-nlp"
+version = "0.1.0"
+description = ""
+authors = ["clement_L <clement@inoco.fr>"]
+readme = "README.md"
+
+[tool.poetry.dependencies]
+python = "^3.10"
+langchain = "^0.2.7"
+langchain-aws = "^0.1.9"
+sagemaker = "^2.225.0"
+
+
+[tool.poetry.group.qual.dependencies]
+langchain-community = "^0.2.7"
+tiktoken = "^0.7.0"
+transformers = "^4.42.3"
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
