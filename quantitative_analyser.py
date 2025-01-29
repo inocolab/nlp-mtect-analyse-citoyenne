@@ -18,7 +18,7 @@ class QuantitativeAnalysisResponse:
 
 class QuantitativeAnalyser:
     def __init__(self):
-        self.comment_sentiment_classifier = CommentSentimentClassifier()
+        self.comment_sentiment_classifier = CommentSentimentClassifier(profile="mtcet-nlp")
         self.toxic_message_detector = ToxicMessageDetector()
 
     def __call__(self, texts: list[str], thread_number: int = 30, batch_size: int = 33) -> QuantitativeAnalysisResponse:
@@ -42,11 +42,16 @@ class QuantitativeAnalyser:
         for text in texts:
             self._callback_start_inference(current_index, text)
             toxic_message_response: ToxicMessageResponse = self.toxic_message_detector(text)
+            if toxic_message_response is None:
+                print(f"-- Toxic message response is None, {text[0:50]}")
+                continue
+
             if toxic_message_response.is_toxic():
                 quantitative_analysis_response.rejected_comments_indexes.append(current_index)
                 self._callback_end_inference(current_index, toxic_message_response)
+
             else:
-                comment_sentiment_response: CommentSentimentResponse = self.comment_sentiment_classifier(text)
+                comment_sentiment_response: CommentSentimentResponse = self.comment_sentiment_classifier({"docs": text})
                 if comment_sentiment_response.is_positive:
                     quantitative_analysis_response.positive_comments_total += 1
                 else:

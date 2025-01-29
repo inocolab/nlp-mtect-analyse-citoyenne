@@ -7,15 +7,20 @@ readme = "README.md"
 
 [tool.poetry.dependencies]
 python = "^3.10"
-langchain = "^0.2.7"
-langchain-aws = "^0.1.9"
-sagemaker = "^2.225.0"
+#langchain = "^0.2.7"
+#langchain-aws = "^0.1.9"
+#sagemaker = "^2.225.0"
 
 
-[tool.poetry.group.qual.dependencies]
-langchain-community = "^0.2.7"
-tiktoken = "^0.7.0"
-transformers = "^4.42.3"
+#[tool.poetry.group.qual.dependencies]
+#langchain-community = "^0.2.7"
+#tiktoken = "^0.7.0"
+#transformers = "^4.42.3"
+langchain-mistralai = "^0.2.4"
+langchain = "^0.3.15"
+langchain-aws = "^0.2.11"
+transformers = "^4.48.1"
+tiktoken = "^0.8.0"
 
 [build-system]
 requires = ["poetry-core"]

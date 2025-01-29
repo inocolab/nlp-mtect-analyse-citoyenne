@@ -1,5 +1,8 @@
 import os
+import random
+import time
 
+from botocore.exceptions import ClientError
 from langchain.chains.llm import LLMChain
 from langchain_aws import ChatBedrock
 from langchain_core.prompts import PromptTemplate
@@ -33,12 +36,31 @@ class CommentSentimentClassifier:
         chat = chat.with_fallbacks(fallback_models * 100)
         self.map_chain = self._build_classification_chain(chat)
 
-    def __call__(self, text: str) -> CommentSentimentResponse:
-        result = self.map_chain.invoke(text)["text"]
+    def __call__(self, text: dict, max_retries=4) -> CommentSentimentResponse:
         is_positive = True
-        if "défavorable" in result.lower() or "defavorable" in result.lower():
-            is_positive = False
-        return CommentSentimentResponse(is_positive)
+        retries = 0
+        result = None
+        while retries < max_retries:
+            try:
+                result = self.map_chain.invoke(text)["text"]
+                if "défavorable" in result.lower() or "defavorable" in result.lower():
+                    is_positive = False
+
+                return CommentSentimentResponse(is_positive)
+
+            except ClientError as e:
+                if e.response['Error']['Code'] == 'ThrottlingException':
+                    wait_time = (2 ** retries) + random.uniform(0, 1)
+                    time.sleep(wait_time)
+                    print(f"Retrying Bedrock after {wait_time} seconds, text: {text[0:50]}...")
+                    retries += 1
+                else:
+                    raise e
+
+        if result is None:
+            return CommentSentimentResponse(False)
+
+
 
     def _build_classification_chain(self, llm):
         map_template = """Classifie ce commentaire relatif à un article de loi comme favorable ou défavorable.
