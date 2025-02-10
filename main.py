@@ -1,5 +1,7 @@
 import pandas as pd
 from data_preprocessor import DataPreprocessor
+from reduce_chain_thread import ReduceChainThreaded
+import time
 
 
 def run_quantitative_analyser():
@@ -25,19 +27,24 @@ def run_qualitative_analyser():
     # from data_preprocessor import DataPreprocessor
     from reduce_chain import ReduceChain
 
-    data_preprocessor = DataPreprocessor("Exemple 1/data_ia.csv")
+    data_preprocessor = DataPreprocessor("Exemple 1/data.csv")
     data_preprocessor.preprocess()
     data = data_preprocessor.extract_title_and_text()
 
     # reduce_chain_pos = ReduceChain("favorables")
-    reduce_chain_neg = ReduceChain("défavorables", profile="mtcet-nlp", token_max=2048)
+    reduce_chain_neg = ReduceChainThreaded("défavorables", profile="mtcet-nlp", token_max=2048)
 
     def run_reduce_chain(chain):
         return chain.run(data)
 
     # result_pos = run_reduce_chain(reduce_chain_pos)
+    
+    start_time = time.time()
     result_neg = run_reduce_chain(reduce_chain_neg)
+    end_time = time.time()
+    print("this programme need : " + str(end_time - start_time) + " to finish")
     print(type(result_neg),result_neg)
+
     # with ThreadPoolExecutor() as executor:
     #     future_pos = executor.submit(run_reduce_chain, reduce_chain_pos)
     #     future_neg = executor.submit(run_reduce_chain, reduce_chain_neg)
@@ -48,3 +55,5 @@ def run_qualitative_analyser():
 if __name__ == "__main__":
     run_qualitative_analyser()
     # run_quantitative_analyser()
+
+# multithread : this programme need : 171.25416660308838 to finish, this programme need : 117.52856040000916 to finish
